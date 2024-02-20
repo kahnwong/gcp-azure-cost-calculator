@@ -10,6 +10,7 @@ st.set_page_config(
 
 
 st.title("GCP-Azure Cost Calculator")
+st.write("Price is in USD")
 
 with st.sidebar:
     # ---------- Container-as-a-service ---------- #

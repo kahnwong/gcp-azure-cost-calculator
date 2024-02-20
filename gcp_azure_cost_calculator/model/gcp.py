@@ -55,7 +55,7 @@ class ArtifactRegistry(BaseModel):
     @computed_field
     @property
     def cost(self) -> float:
-        return round(float(self.storage_per_gb_month + self.storage_gb), 2)
+        return round(float(self.storage_per_gb_month * self.storage_gb), 2)
 
 
 if __name__ == "__main__":
