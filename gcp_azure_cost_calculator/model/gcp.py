@@ -4,13 +4,17 @@ from pydantic import BaseModel
 from pydantic import computed_field
 
 # """
-# Ref: https://cloud.google.com/run/pricing
-# Unit: USD
-# Region: asia-southeast1 # tier 2
+# Price: USD
+# Region: asia-southeast1
 # """
 
 
 class CloudRun(BaseModel):
+    """
+    https://cloud.google.com/run/pricing
+    Tier 2
+    """
+
     # cost
     vcpu_second: Decimal = Decimal(0.00003360)
     memory_second: Decimal = Decimal(0.00000350)
@@ -46,6 +50,10 @@ class CloudRun(BaseModel):
 
 
 class ArtifactRegistry(BaseModel):
+    """
+    https://cloud.google.com/artifact-registry/pricing
+    """
+
     # cost
     storage_per_gb_month: Decimal = Decimal(0.10)
 
@@ -56,6 +64,38 @@ class ArtifactRegistry(BaseModel):
     @property
     def cost(self) -> float:
         return round(float(self.storage_per_gb_month * self.storage_gb), 2)
+
+
+class GenAILanguage(BaseModel):
+    """
+    https://cloud.google.com/vertex-ai/docs/generative-ai/pricing
+    PaLM 2 for Text
+    """
+
+    # cost
+    input_per_thousand_character: Decimal = Decimal(0.00025)
+    output_per_thousand_character: Decimal = Decimal(0.0005)
+
+    # user's input
+    requests_per_month: Decimal = Decimal(20000)
+    avg_input_character: Decimal = Decimal(1000)
+    avg_output_character: Decimal = Decimal(2000)
+
+    @computed_field
+    @property
+    def cost_per_request(self) -> Decimal:
+        return (
+            self.input_per_thousand_character * self.avg_input_character / Decimal(1000)
+        ) + (
+            self.output_per_thousand_character
+            * self.avg_output_character
+            / Decimal(1000)
+        )
+
+    @computed_field
+    @property
+    def cost(self) -> float:
+        return round(float(self.cost_per_request * self.requests_per_month), 2)
 
 
 if __name__ == "__main__":

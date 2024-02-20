@@ -10,7 +10,13 @@ st.set_page_config(
 
 
 st.title("GCP-Azure Cost Calculator")
-st.write("Price is in USD")
+st.markdown(
+    """
+- Price is in USD
+- GCP Gen AI model: PaLM 2 for Text
+- Azure Gen AI model: GPT-3.5-Turbo-0125
+"""
+)
 
 with st.sidebar:
     # ---------- Container-as-a-service ---------- #
@@ -40,6 +46,31 @@ with st.sidebar:
         label="container storage (GB)", min_value=5, max_value=1000, step=2, value=5
     )
 
+    # ---------- Gen AI ---------- #
+    gen_ai_requests_per_month = st.number_input(
+        label="Gen AI requests per month",
+        min_value=1000,
+        max_value=99999999999999,
+        step=1000,
+        value=20000,
+    )
+
+    avg_input_character = st.number_input(
+        label="average input character",
+        min_value=100,
+        max_value=99999999999999,
+        step=200,
+        value=1000,
+    )
+
+    avg_output_character = st.number_input(
+        label="average output character",
+        min_value=100,
+        max_value=99999999999999,
+        step=200,
+        value=2000,
+    )
+
 # show results
 
 ## CaaS
@@ -61,9 +92,23 @@ azure_caas = azure.ContainerApps(
 gcp_cr = gcp.ArtifactRegistry(storage_gb=5).cost
 azure_cr = azure.ContainerRegistry(storage_gb=5).cost
 
+# Gen AI
+gcp_gen_ai = gcp.GenAILanguage(
+    requests_per_month=gen_ai_requests_per_month,
+    avg_input_character=avg_input_character,
+    avg_output_character=avg_output_character,
+).cost
+
+azure_gen_ai = azure.OpenAI(
+    requests_per_month=gen_ai_requests_per_month,
+    avg_input_character=avg_input_character,
+    avg_output_character=avg_output_character,
+).cost
+
 st.dataframe(
     [
         {"Service": "CaaS", "GCP": gcp_caas, "Azure": azure_caas},
         {"Service": "Image Registry", "GCP": gcp_cr, "Azure": azure_cr},
+        {"Service": "Gen AI (Language)", "GCP": gcp_gen_ai, "Azure": azure_gen_ai},
     ]
 )
