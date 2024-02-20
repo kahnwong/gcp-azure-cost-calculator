@@ -108,7 +108,7 @@ azure_gen_ai = azure.OpenAI(
 st.dataframe(
     [
         {"Service": "CaaS", "GCP": gcp_caas, "Azure": azure_caas},
-        {"Service": "Image Registry", "GCP": gcp_cr, "Azure": azure_cr},
+        {"Service": "Container Registry", "GCP": gcp_cr, "Azure": azure_cr},
         {"Service": "Gen AI (Language)", "GCP": gcp_gen_ai, "Azure": azure_gen_ai},
     ]
 )
