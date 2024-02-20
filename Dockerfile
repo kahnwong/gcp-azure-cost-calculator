@@ -10,4 +10,4 @@ RUN pip install -e .
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "app.py", "--server.port", "8501"]
+CMD ["streamlit", "run", "gcp_azure_cost_calculator/frontend.py", "--server.port", "8501"]

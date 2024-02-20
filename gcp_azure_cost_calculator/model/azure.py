@@ -1,17 +1,15 @@
 from decimal import Decimal
 
-from pydantic import BaseModel
-from pydantic import computed_field
+from gcp_azure_cost_calculator.model.gcp import CloudRun
 
 # """
 # Ref: https://azure.microsoft.com/en-us/pricing/details/container-apps/#pricing
 # Unit: USD
-# Price: per month
-# Region: asia-southeast1 # tier 2
+# Region: Southeast Asia
 # """
 
 
-class ContainerApps(BaseModel):
+class ContainerApps(CloudRun):
     # cost
     vcpu_second: Decimal = Decimal(0.000034)
     memory_second: Decimal = Decimal(0.000004)
@@ -22,28 +20,6 @@ class ContainerApps(BaseModel):
     memory_request: Decimal = Decimal(1.0)
     execution_time_per_request_ms: Decimal = Decimal(50)
     requests_per_month: Decimal = Decimal(10000)
-
-    @computed_field
-    @property
-    def execution_time_second(self) -> Decimal:
-        return (
-            self.execution_time_per_request_ms * self.requests_per_month / Decimal(1000)
-        )
-
-    @computed_field
-    @property
-    def cost_cpu(self) -> Decimal:
-        return self.vcpu_request * self.vcpu_second * self.execution_time_second
-
-    @computed_field
-    @property
-    def cost_memory(self) -> Decimal:
-        return self.memory_request * self.memory_second * self.execution_time_second
-
-    @computed_field
-    @property
-    def cost(self) -> Decimal:
-        return self.cost_cpu + self.cost_memory
 
 
 if __name__ == "__main__":

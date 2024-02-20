@@ -41,8 +41,8 @@ class CloudRun(BaseModel):
 
     @computed_field
     @property
-    def cost(self) -> Decimal:
-        return self.cost_cpu + self.cost_memory
+    def cost(self) -> float:
+        return round(float(self.cost_cpu + self.cost_memory), 2)
 
 
 if __name__ == "__main__":
