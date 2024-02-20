@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from gcp_azure_cost_calculator.model.gcp import ArtifactRegistry
 from gcp_azure_cost_calculator.model.gcp import CloudRun
 
 # """
@@ -15,11 +16,10 @@ class ContainerApps(CloudRun):
     memory_second: Decimal = Decimal(0.000004)
     request_million: Decimal = Decimal(0.40)
 
-    # user's input
-    vcpu_request: Decimal = Decimal(1.0)
-    memory_request: Decimal = Decimal(1.0)
-    execution_time_per_request_ms: Decimal = Decimal(50)
-    requests_per_month: Decimal = Decimal(10000)
+
+class ContainerRegistry(ArtifactRegistry):
+    # cost
+    storage_per_gb_month: Decimal = Decimal(0.667)
 
 
 if __name__ == "__main__":

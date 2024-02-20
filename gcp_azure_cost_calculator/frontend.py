@@ -34,7 +34,14 @@ with st.sidebar:
         value=100000000,
     )
 
+    # ---------- Container Registry ---------- #
+    storage_gb = st.number_input(
+        label="container storage (GB)", min_value=5, max_value=1000, step=2, value=5
+    )
+
 # show results
+
+## CaaS
 gcp_caas = gcp.CloudRun(
     vcpu_request=vcpu_request,
     memory_request=memory_request,
@@ -49,9 +56,13 @@ azure_caas = azure.ContainerApps(
     requests_per_month=requests_per_month,
 ).cost
 
+## Container Registry
+gcp_cr = gcp.ArtifactRegistry(storage_gb=5).cost
+azure_cr = azure.ContainerRegistry(storage_gb=5).cost
+
 st.dataframe(
     [
         {"Service": "CaaS", "GCP": gcp_caas, "Azure": azure_caas},
-        # {"Service": "Image Registry", "GCP": 5, "Azure": 6},
+        {"Service": "Image Registry", "GCP": gcp_cr, "Azure": azure_cr},
     ]
 )

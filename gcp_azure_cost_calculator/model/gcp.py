@@ -45,6 +45,19 @@ class CloudRun(BaseModel):
         return round(float(self.cost_cpu + self.cost_memory), 2)
 
 
+class ArtifactRegistry(BaseModel):
+    # cost
+    storage_per_gb_month: Decimal = Decimal(0.10)
+
+    # user's input
+    storage_gb: Decimal = Decimal(1)
+
+    @computed_field
+    @property
+    def cost(self) -> float:
+        return round(float(self.storage_per_gb_month + self.storage_gb), 2)
+
+
 if __name__ == "__main__":
     # test
     cloud_run = CloudRun(
