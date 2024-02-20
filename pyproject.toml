@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 pydantic = "2.3.0"
-streamlit = "1.26.0"
+streamlit = "1.30.0"
 
 [build-system]
 requires = ["poetry-core"]
