@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "gcp-azure-cost-calculator"
+version = "0.1.0"
+description = ""
+authors = ["kahnwong <karn@karnwong.me>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic = "2.3.0"
+streamlit = "1.26.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

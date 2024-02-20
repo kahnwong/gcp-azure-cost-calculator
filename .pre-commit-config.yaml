@@ -1,0 +1,83 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-yaml
+      - id: detect-private-key
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+      - id: file-contents-sorter
+        files: requirements.txt|requirements-dev.txt
+  # ------------------------- ops ------------------------
+  # - repo: https://github.com/jumanjihouse/pre-commit-hooks
+  #   rev: 3.0.0
+  #   hooks:
+  #     - id: shellcheck
+  #       args:
+  #         - -e
+  #         - SC2086
+  #     - id: shfmt
+  - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+    rev: 0.2.1
+    hooks:
+      - id: yamlfmt
+        args:
+          - --mapping
+          - "2"
+          - --sequence
+          - "4"
+          - --offset
+          - "2"
+          - --width
+          - "150"
+          - --preserve-quotes
+  - repo: https://github.com/AleksaC/hadolint-py
+    rev: v1.19.0
+    hooks:
+      - id: hadolint
+        args:
+          - --ignore
+          - DL3025
+          - --ignore
+          - DL3018
+          - --ignore
+          - DL3027
+  # ------------------------- python ------------------------
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.0.245
+    hooks:
+      - id: ruff
+        args: ["--fix", "--ignore=E402,E501"]
+        exclude: ^migrations/
+  - repo: https://github.com/asottile/reorder_python_imports
+    rev: v2.6.0
+    hooks:
+      - id: reorder-python-imports
+  - repo: https://github.com/python-poetry/poetry
+    rev: 1.6.1
+    hooks:
+      - id: poetry-check
+      - id: poetry-lock
+      - id: poetry-export
+        args: ["--without-hashes", "-f", "requirements.txt", "-o", "requirements.txt"]
+
+  # - repo: local
+  #   hooks:
+  #     - id: pytest
+  #       name: pytest
+  #       entry: pytest tests/tests.py
+  #       language: system
+  #       types: [python]
+  #       pass_filenames: false
+  #       require_serial: true
