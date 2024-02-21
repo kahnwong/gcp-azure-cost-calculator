@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from gcp_azure_cost_calculator.model.gcp import ArtifactRegistry
 from gcp_azure_cost_calculator.model.gcp import CloudRun
+from gcp_azure_cost_calculator.model.gcp import CloudStorage
 from gcp_azure_cost_calculator.model.gcp import GenAILanguage
 
 # """
@@ -28,6 +29,16 @@ class ContainerRegistry(ArtifactRegistry):
 
     # cost
     storage_per_gb_month: Decimal = Decimal(0.667)
+
+
+class BlobStorage(CloudStorage):
+    """
+    https://azure.microsoft.com/en-us/pricing/details/storage/blobs/#pricing
+    Standard
+    """
+
+    # cost
+    storage_per_gb_month: Decimal = Decimal(0.02)
 
 
 class OpenAI(GenAILanguage):

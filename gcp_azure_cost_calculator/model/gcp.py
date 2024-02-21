@@ -66,6 +66,24 @@ class ArtifactRegistry(BaseModel):
         return round(float(self.storage_per_gb_month * self.storage_gb), 2)
 
 
+class CloudStorage(BaseModel):
+    """
+    https://cloud.google.com/storage/pricing
+    Standard
+    """
+
+    # cost
+    storage_per_gb_month: Decimal = Decimal(0.020)
+
+    # user's input
+    storage_gb: Decimal = Decimal(1)
+
+    @computed_field
+    @property
+    def cost(self) -> float:
+        return round(float(self.storage_per_gb_month * self.storage_gb), 2)
+
+
 class GenAILanguage(BaseModel):
     """
     https://cloud.google.com/vertex-ai/docs/generative-ai/pricing
