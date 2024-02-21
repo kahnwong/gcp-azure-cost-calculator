@@ -1,3 +1,4 @@
+import polars as pl
 import streamlit as st
 
 from gcp_azure_cost_calculator.model import azure
@@ -13,12 +14,15 @@ st.title("GCP-Azure Cost Calculator")
 with st.sidebar:
     st.markdown(
         """
-    - Price is in **USD / month**
+    - Price is in **per month**
     - Region: Singapore
     - GCP Gen AI model: **PaLM 2 for Text**
     - Azure Gen AI model: **GPT-3.5-Turbo-0125**
+    ----
     """
     )
+
+    currency = st.radio(label="currency", options=["USD", "THB"])
 
 
 caas, container_registry, blob_storage, gen_ai = st.columns(4)
@@ -45,7 +49,7 @@ with caas:
             min_value=1000,
             max_value=99999999999999,
             step=1000,
-            value=100000000,
+            value=100000,
         )
 
 # ---------- Container Registry ---------- #
@@ -132,7 +136,7 @@ azure_gen_ai = azure.OpenAI(
     avg_output_character=avg_output_character,
 ).cost
 
-st.dataframe(
+df = pl.DataFrame(
     [
         {"Service": "CaaS", "GCP": gcp_caas, "Azure": azure_caas},
         {"Service": "Container Registry", "GCP": gcp_cr, "Azure": azure_cr},
@@ -144,3 +148,11 @@ st.dataframe(
         {"Service": "Gen AI (Language)", "GCP": gcp_gen_ai, "Azure": azure_gen_ai},
     ]
 )
+
+if currency == "THB":
+    usd_thai_exchange_rate = 36
+    df = df.with_columns(pl.col("GCP") * usd_thai_exchange_rate).with_columns(
+        pl.col("Azure") * usd_thai_exchange_rate
+    )
+
+st.dataframe(df)
