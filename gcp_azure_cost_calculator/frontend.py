@@ -1,4 +1,3 @@
-import polars as pl
 import streamlit as st
 
 from gcp_azure_cost_calculator.model import azure
@@ -100,43 +99,60 @@ with gen_ai:
         )
 
 # show results
-## CaaS
-gcp_caas = gcp.CloudRun(
-    vcpu_request=vcpu_request,
-    memory_request=memory_request,
-    execution_time_per_request_ms=execution_time_per_request_ms,
-    requests_per_month=requests_per_month,
-).cost
+if currency == "THB":
+    exchange_rate = 36  # usd_thai_exchange_rate
+else:
+    exchange_rate = 1
 
-azure_caas = azure.ContainerApps(
-    vcpu_request=vcpu_request,
-    memory_request=memory_request,
-    execution_time_per_request_ms=execution_time_per_request_ms,
-    requests_per_month=requests_per_month,
-).cost
+## CaaS
+gcp_caas = (
+    gcp.CloudRun(
+        vcpu_request=vcpu_request,
+        memory_request=memory_request,
+        execution_time_per_request_ms=execution_time_per_request_ms,
+        requests_per_month=requests_per_month,
+    ).cost
+    * exchange_rate
+)
+
+azure_caas = (
+    azure.ContainerApps(
+        vcpu_request=vcpu_request,
+        memory_request=memory_request,
+        execution_time_per_request_ms=execution_time_per_request_ms,
+        requests_per_month=requests_per_month,
+    ).cost
+    * exchange_rate
+)
 
 ## Container Registry
-gcp_cr = gcp.ArtifactRegistry(storage_gb=5).cost
-azure_cr = azure.ContainerRegistry(storage_gb=5).cost
+gcp_cr = gcp.ArtifactRegistry(storage_gb=5).cost * exchange_rate
+azure_cr = azure.ContainerRegistry(storage_gb=5).cost * exchange_rate
 
 ## Blob Storage
-gcp_blob_storage = gcp.CloudStorage(storage_gb=5).cost
-azure_blob_storage = azure.BlobStorage(storage_gb=5).cost
+gcp_blob_storage = gcp.CloudStorage(storage_gb=5).cost * exchange_rate
+azure_blob_storage = azure.BlobStorage(storage_gb=5).cost * exchange_rate
 
 # Gen AI
-gcp_gen_ai = gcp.GenAILanguage(
-    requests_per_month=gen_ai_requests_per_month,
-    avg_input_character=avg_input_character,
-    avg_output_character=avg_output_character,
-).cost
+gcp_gen_ai = (
+    gcp.GenAILanguage(
+        requests_per_month=gen_ai_requests_per_month,
+        avg_input_character=avg_input_character,
+        avg_output_character=avg_output_character,
+    ).cost
+    * exchange_rate
+)
 
-azure_gen_ai = azure.OpenAI(
-    requests_per_month=gen_ai_requests_per_month,
-    avg_input_character=avg_input_character,
-    avg_output_character=avg_output_character,
-).cost
+azure_gen_ai = (
+    azure.OpenAI(
+        requests_per_month=gen_ai_requests_per_month,
+        avg_input_character=avg_input_character,
+        avg_output_character=avg_output_character,
+    ).cost
+    * exchange_rate
+)
 
-df = pl.DataFrame(
+st.dataframe(
     [
         {"Service": "CaaS", "GCP": gcp_caas, "Azure": azure_caas},
         {"Service": "Container Registry", "GCP": gcp_cr, "Azure": azure_cr},
@@ -148,11 +164,3 @@ df = pl.DataFrame(
         {"Service": "Gen AI (Language)", "GCP": gcp_gen_ai, "Azure": azure_gen_ai},
     ]
 )
-
-if currency == "THB":
-    usd_thai_exchange_rate = 36
-    df = df.with_columns(pl.col("GCP") * usd_thai_exchange_rate).with_columns(
-        pl.col("Azure") * usd_thai_exchange_rate
-    )
-
-st.dataframe(df)

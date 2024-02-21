@@ -9,8 +9,6 @@ readme = "README.md"
 python = "^3.11"
 pydantic = "2.3.0"
 streamlit = "1.31.0"
-polars = "^0.20.10"
-polars-lts-cpu = "^0.20.10"
 
 [build-system]
 requires = ["poetry-core"]
