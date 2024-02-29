@@ -56,7 +56,7 @@ with container_registry:
     with st.container(border=True):
         st.header("Container Registry")
 
-        storage_gb = st.number_input(
+        container_storage_gb = st.number_input(
             label="container storage (GB)", min_value=5, max_value=1000, step=2, value=5
         )
 
@@ -126,12 +126,13 @@ azure_caas = (
 )
 
 ## Container Registry
-gcp_cr = gcp.ArtifactRegistry(storage_gb=5).cost * exchange_rate
-azure_cr = azure.ContainerRegistry(storage_gb=5).cost * exchange_rate
+gcp_cr = gcp.ArtifactRegistry(storage_gb=container_storage_gb).cost * exchange_rate
+azure_cr = azure.ContainerRegistry(storage_gb=container_storage_gb).cost * exchange_rate
 
 ## Blob Storage
-gcp_blob_storage = gcp.CloudStorage(storage_gb=5).cost * exchange_rate
-azure_blob_storage = azure.BlobStorage(storage_gb=5).cost * exchange_rate
+gcp_blob_storage = gcp.CloudStorage(storage_gb=blob_storage_gb).cost * exchange_rate
+azure_blob_storage = azure.BlobStorage(storage_gb=blob_storage_gb).cost * exchange_rate
+
 
 # Gen AI
 gcp_gen_ai = (
